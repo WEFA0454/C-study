@@ -1,0 +1,147 @@
+/*Tic-tac game*/
+
+#include<stdio.h>
+#include<Windows.h>
+#define length 30//the tunrs
+
+void printtheformat(char array[])
+{
+	int i = 0;
+	for (i = 0; i < 9; i++)
+	{
+		if (2 == i || 5 == i || 8 == i)
+		{
+			printf("%3c\n", array[i]);
+		}
+		else
+			printf("%3c", array[i]);
+	}
+
+}
+
+void Totestthenum(int* num, int numposition[],int elmts)
+{
+	if (*num > 0 && *num < 10)
+	{
+		int i = 0;
+
+		//to make sure whether the num is in the numposition[]
+		for (i = 0; i < elmts; i++)
+		{
+			if (*num != numposition[i])
+				continue;
+			else
+			{
+				printf("wrong number!! Please input the number between 1 and 9:");
+				scanf_s("%d", num);
+				Totestthenum(num, numposition, elmts);
+				break;
+			}
+		}
+	}
+	else
+	{
+		printf("wrong number!! Please input the number between 1 and 9:");
+		scanf_s("%d", num);
+		Totestthenum(num, numposition, elmts);
+	}
+	
+}
+
+
+int winning(char array[])
+{
+	if ((array[0] == array[1] && array[1] == array[2]) ||
+		(array[3] == array[4] && array[4] == array[5]) ||
+		(array[6] == array[7] && array[7] == array[8]) ||
+		(array[0] == array[3] && array[3] == array[6]) ||
+		(array[1] == array[4] && array[4] == array[7]) ||
+		(array[2] == array[5] && array[5] == array[8]) ||
+		(array[0] == array[4] && array[4] == array[8]) ||
+		(array[2] == array[4] && array[4] == array[6]))
+		return 0;
+}
+
+
+void playGame(char array[])
+{
+	int numposition[length] = { 0 };//to store the position number which has been used.
+	int k = 0;
+	int res = 1;// to stop the loop
+	int steps = 0;//store the steps to avoid the situation when nobody wins the game
+
+	char playersname = 'X';
+	char sign = 'X';
+
+	//output the original form
+	printtheformat(array);
+	
+	//start the game
+	int player = 1;//when the player is odd that means is the X player's turn, while if the player is even that means is the Y player's turn.
+	do
+	{
+		//to make sure the player's turn in the prompt message
+		if (player % 2 == 1)
+		{
+			playersname = 'X';
+			sign = 'X';
+		}
+		else
+		{
+			playersname = 'Y';
+			sign = 'O';
+		}
+
+		int pnum = 0;//the position's number
+
+		printf("Player %c, please enter the number in the display (1 - 9)\n",playersname);
+		printf("where you wish your mark to be placed.\n");
+		scanf_s("%d", &pnum);
+
+		//test number and change the wrong number
+		Totestthenum(&pnum,numposition,k);
+		numposition[k] = pnum;
+		k++;
+
+		//clean the screen
+		system("cls");
+
+		array[pnum - 1] = sign;
+
+		//output
+		printtheformat(array);
+		
+		//whether win the game
+		res = winning(array);
+
+        player++;
+        steps++;
+
+        //for the situation if there is nobody wins the game
+		if(9==steps)
+		{
+			if((res=winning(array))!=0)
+			break;
+		}
+	} while (res != 0);
+	
+	if(0 != res)
+		printf("Nobody wins the game...\n");
+
+	else
+	    printf("\nThe %c player wins the game!!!\n", playersname);
+
+	system("pause");
+}
+
+
+int main()
+{
+	char array[10];
+	//initialize array prior to playing
+	for (int i = 0; i < 10; i++)
+		array[i] = (char)('1' + i);
+	array[9] = '\0';
+	playGame(array);
+	return 0;
+}
