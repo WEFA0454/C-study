@@ -1,0 +1,173 @@
+/*
+book_seats
+Ҧ��ѣ
+22301055
+*/
+
+#include<stdio.h>
+#include<stdlib.h>
+#include<string.h>
+#define NUM 11
+#define YES 1
+
+typedef struct EMUseat {
+	int numBer;
+	char resErve;// O for void , R for reserved 
+	char lastName[NUM];
+	char firstName[NUM];
+}sEAt;
+
+void menu()
+{
+	puts("1) Show the total number of empty seats.");
+	puts("2) Show situation of all seat.");
+	puts("3) Show the information of a seat.");
+	puts("4) Reserve an empty seat to a customer.");
+	puts("5) Delete a seat reservation.");
+	puts("6) Save the current reservations.");
+	puts("0) Quit.\n");
+}
+
+void showAllseat(sEAt *emp,int nUm,int b)
+{
+	int units = 0;
+	int k = 0;
+	for (units = 0; units < nUm; units++)
+	{
+		printf("NO. %d units of carriages\n", units+1);
+		puts("--------------------------------");
+		int rOw = 0, cIr = 0;
+		for (rOw = 0; rOw < 10; rOw++)
+		{
+			for (cIr = 0; cIr < 6; cIr++, k++)
+			{
+				if (cIr == 3)
+					printf("	%3c", (emp + k)->resErve);
+				else
+				    printf("%3c", (emp + k)->resErve);
+			
+			}
+			printf("\n");
+		}
+		printf("\n");
+	}
+}
+
+void showEMPseat(sEAt* emp, int nUm, int b)
+{
+	int sumEMPseat = 0;
+	int m = 0, n = 0,k=0;
+	for (m = 0; m < nUm; m++)
+	{
+		for (n = 0; n < b;k++,n++)
+		{
+			if (strcmp(&(emp + k)->resErve,"O")==0)
+				sumEMPseat++;
+
+		}
+	}
+	printf("all the empty seats:%3d\n\n\n", sumEMPseat);
+}
+
+void seatINfor(sEAt* p)
+{
+	printf("\tseat information\n");
+	printf("seat number:%d\n", p->numBer);
+	printf("whether reserved:%c\n", p->resErve);
+	printf("last name:%s\n", p->lastName);
+	printf("first name:%s\n\n", p->firstName);
+}
+
+sEAt reserveSEat(sEAt* p)
+{
+	sEAt bacKUp = *p;
+	strcpy(&bacKUp.resErve, "R");
+	printf("Please input your first name:");
+	scanf("%s", &(bacKUp.firstName));
+	printf("Please input your last name:");
+	scanf("%s", &(bacKUp.lastName));
+	puts("The information have been input...\n");
+	return bacKUp;
+}
+
+int main()	
+{
+	sEAt test[5][60] = { 0 };
+ 
+	int nUm = 5;// 5 units of carriages
+	int anSWer = 0;
+	//initialize all seat are 'O' and the seat number
+	int m = 0, n = 0;
+	int seatNUM = 0;//example:1011 the NO.1 units of carriages the fisrt line the first seat
+	for (m = 0; m < nUm; m++)
+	{ 
+		for (n = 0,seatNUM = 0; n < 60; n++)
+		{
+			++seatNUM;
+			strcpy(&(test[m][n]).resErve, "O");
+			(test[m][n]).numBer = seatNUM+(m+1)*1000;
+		}
+	}
+	int l, j, k, i;//calculate the seat
+	sEAt bOOk;
+	sEAt* store = 0;
+	int whetherRESErve = 0;
+	do{
+		menu();
+		scanf_s("%d", &anSWer);
+		system("cls");
+		switch (anSWer)
+		{
+		case 1:
+			showEMPseat(&test[0][0], nUm, 60);
+			break;
+		case 2:
+			showAllseat(&test[0][0], nUm, 60);
+			break;
+		case 3:
+			puts("input the seat you want to search...\nFormat:x-x-x");
+			scanf_s("%d-%d-%d", &l, &j, &k);
+			m = l - 1;
+			n = (j - 1) * 6 + k - 1;
+			seatINfor(&test[m][n]);
+			break;
+		case 4:
+			puts("input the seat you want to search...\nFormat:x-x-x");
+			scanf_s("%d-%d-%d", &l, &j, &k);
+			m = l - 1;
+			n = (j - 1) * 6 + k - 1;
+			bOOk = reserveSEat(&test[m][n]);
+			store = &test[m][n];//use to store in the step 6
+			whetherRESErve = YES;
+			break;
+		case 5:
+			if (whetherRESErve == YES)
+			{
+				strcpy(&store->resErve, "O");
+				for (i = 0; i < NUM; i++)
+				{
+					strcpy(&store->firstName[i], "\0");
+					strcpy(&store->lastName[i], "\0");
+				}
+			}
+			else
+				printf("please reserve a seat first...\n\n");
+			break;
+		case 6:
+			if (whetherRESErve == YES)
+			{
+				printf("store the information...\n");
+				*store = bOOk;
+			}
+			else
+				printf("please reserve a seat first...\n\n");
+			break;
+		case 0:
+			puts("quit now...");
+			break;
+		}
+	}while (anSWer);
+	
+	return 0;
+}
+ 
